@@ -1,15 +1,18 @@
+#python2/3 compatability
 try:
     import tkinter as tk    
-    from tkinter import *
+    from tkinter import StringVar, Label, W, Entry, Listbox, Button, END
     from tkinter import messagebox as mb
 except ImportError:
     import Tkinter as tk
-    from Tkinter import *
+    from Tkinter import StringVar, Label, W, Entry, Listbox, Button, END
     from Tkinter import messagebox as mb
-from db import Database
 import clipboard as cbl
+from db import Database
+#create database and connection
 db = Database('swiftpass.db')
 
+#Tkinter class
 class Application(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         self.entrys = []
@@ -19,16 +22,18 @@ class Application(tk.Frame):
         self.previous_index = None
         self.update_flag = False
         self.action_flag = 0 
+        #init frame
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
+        #Set window name, size
         parent.title('SwiftPass')
         parent.geometry('700x700')
+        #on mouse1 click, deselect listbox
         parent.bind('<ButtonPress-1>', self.deselect_lb_item)
-
-        #parent.bind("<<FocusIn>>", self.onfocus)
         self.generate_widgets()
         self.populate_data()
     def generate_widgets(self):
+        #Service ID
         self.serviceid_text = StringVar()
         self.serviceid_label = Label(self.parent, text='Service ID', font=('bold', 14,), pady=20, padx=5)
         self.serviceid_label.grid(row=0, column=0,sticky=W)
@@ -37,6 +42,7 @@ class Application(tk.Frame):
         self.entrys.append(self.serviceid_entry)
         self.textboxes.append(self.serviceid_text)
 
+        #Service Name
         self.service_text = StringVar()
         self.service_label = Label(self.parent, text='Service Name', font=('bold', 14), pady=20, padx=5)
         self.service_label.grid(row=1, column=0,sticky=W)
@@ -45,7 +51,7 @@ class Application(tk.Frame):
         self.entrys.append(self.service_entry)
         self.textboxes.append(self.service_text)
 
-
+        #URL
         self.url_text = StringVar()
         self.url_label = Label(self.parent, text='URL', font=('bold', 14), pady=20, padx=5)
         self.url_label.grid(row=2, column=0, sticky=W)
@@ -54,7 +60,7 @@ class Application(tk.Frame):
         self.entrys.append(self.url_entry)
         self.textboxes.append(self.url_text)
 
-
+        #Username
         self.username_text = StringVar()
         self.username_label = Label(self.parent, text='Username', font=('bold,', 14), pady=20, padx=5)
         self.username_label.grid(row=3, column=0, stick=W)
@@ -64,7 +70,7 @@ class Application(tk.Frame):
         self.textboxes.append(self.username_text)
 
 
-
+        #Password
         self.password_text=StringVar()
         self.password_label = Label(self.parent, text='Password', font =('bold',14), pady=20, padx=5)
         self.password_label.grid(row=4, column=0, sticky=W)
@@ -74,7 +80,7 @@ class Application(tk.Frame):
         self.textboxes.append(self.password_text)
 
 
-
+        #Listbox
         self.password_list = Listbox(self.parent, height=20, width=50, border=1)
         self.password_list.grid(row=5, column=0, padx=5, columnspan=3, rowspan=6)
         self.password_list.bind('<<ListboxSelect>>', self.select)
@@ -84,77 +90,97 @@ class Application(tk.Frame):
         #self.password_list.config(yscrollcommand=self.scrollbar.set)
         #self.scrollbar.config(command=self.password_list.yview)
 
+        #Add button
         self.add_btn = Button(self.parent, text='Add Service', width=12, command=self.add_service)
         self.add_btn.grid(row=0, column=3, pady=20,padx=5)
 
+        #Remove button
         self.remove_btn = Button(self.parent, text='Remove Service', width=12, command=self.remove_service)
         self.remove_btn.grid(row=0, column=4, pady=20, padx=5)
 
+        #Edit button
         self.edit_btn = Button(self.parent, text='Edit Service', width=12,command=self.edit_service)
         self.edit_btn.grid(row=1, column=3, pady=20, padx=5)
 
+        #Show Password button
         self.show_passwords_btn = Button(self.parent, text='Show Passwords', width=12, command=self.toggle_show_passwords)
         self.show_passwords_btn.grid(row=1, column=4, pady=20, padx=5)
 
+        #Save button
         self.save_btn = Button(self.parent, text='Save', width=12, command=self.save,state='disabled')
         self.save_btn.grid(row=2, column=3, pady=20, padx=5)
 
+        #Cancel button
         self.cancel_btn = Button(self.parent, text='Cancel', width=12, command=self.cancel,state='disabled')
         self.cancel_btn.grid(row=2, column=4, pady=20, padx=5)
 
+        #Copy URL button
         self.copy_url_btn = Button(self.parent, text='Copy', width=12, command= lambda : self.clipboard(self.url_entry.get()))
         self.copy_url_btn.grid(row =2, column=2)
 
+        #Copy Username button
         self.copy_uname_btn = Button(self.parent, text='Copy', width=12, command= lambda : self.clipboard(self.username_entry.get()))
         self.copy_uname_btn.grid(row =3, column=2)    
 
+        #Copy Password button
         self.copy_pass_btn = Button(self.parent, text='Copy', width=12, command= lambda : self.clipboard(db.get_password(self.serviceid_entry.get())))
         self.copy_pass_btn.grid(row =4, column=2) 
-       # self.toggle_tb(1)
+        #self.toggle_tb(1)
 
+    #Deselect currently selected listbox item
     def deselect_lb_item(self, event):
         if self.selected_index == self.previous_index:
             self.password_list.selection_clear(0, tk.END)
         self.previous_index = self.password_list.curselection()
 
     def populate_data(self):
+        #clear listbox
         self.password_list.delete(0, END)
 
         if self.asterisks == 1:
             for row in db.fetch():
+                #anonyimise password
                 self.anonyimise_listbox(row)
         if self.asterisks == 0:
             for row in db.fetch():
+                #insert row to listbox
                 self.password_list.insert(END, row)
+
         self.password_list.select_set(self.selected_index)
         self.password_list.event_generate("<<ListboxSelect>>")
     
     def anonyimise_listbox(self, data):
+        #anonyimise password
         pwd = self.anonymise(str(data[4]))
         data_list = list(data)
         data_list[4]=pwd
         new_row = tuple(data_list)
+        #insert password
         self.password_list.insert(END, new_row)
     def unan_listbox(self):
+        #reinit data
         self.populate_data()
 
     def toggle_show_passwords(self):
         changed_flag = False
         if self.asterisks ==1: 
             self.asterisks = 0
+            #reinit data
             self.populate_data()
             changed_flag = True
         if self.asterisks == 0 and changed_flag is False:
             self.asterisks = 1
+            #clear listbox
             self.password_list.delete(0, END)
-
             
             for row in db.fetch():
+                #anonymise password
                 self.anonyimise_listbox(row)
         self.password_list.select_set(self.selected_index)
         self.password_list.event_generate("<<ListboxSelect>>")
     
     def anonymise(self, password):
+        #return anonyimised password
         return "*"*len(password)
     def add_service(self):
         self.clear()
@@ -199,12 +225,15 @@ class Application(tk.Frame):
             self.populate_data()
     def insert_service(self):
         if self.check() == -1: return -1
+        #insert data to be database
         db.insert(self.service_entry.get(), self.url_entry.get(), str(self.username_entry.get()), self.password_entry.get())
         self.populate_data()
 
 
     def check(self):
+        #length check
         if len(self.service_entry.get()) == 0 or len(self.username_entry.get()) == 0 or len(self.url_entry.get()) == 0 or len(self.password_entry.get()) == 0:
+            #show message box
             mb.showerror("Error", "Please ensure all fields contain data")
             return -1
         return 1
@@ -223,17 +252,20 @@ class Application(tk.Frame):
     
     def commit_edit(self):
         if self.check()==-1: return
+        #update database
         db.update(self.serviceid_entry.get(), self.service_entry.get(), self.url_entry.get(), str(self.username_entry.get()), self.password_entry.get())
         self.populate_data()
 
     def remove_service(self):
         return
     def clear(self):
+        #clear textboxes
         for tb in self.textboxes:
             tb.set('')
         return
 
     def toggle_tb(self, flag):
+        #enable/disable textboxes
         if flag == 1:
             for tb in self.entrys:
                 tb.config(state='disabled')
@@ -242,6 +274,7 @@ class Application(tk.Frame):
             tb.config(state='normal')
         self.serviceid_entry.config(state='disabled')
     def select(self, event):
+        #insert selected listbox item into textboxes
         sel= self.password_list.get(self.password_list.curselection())
         self.selected_index = self.password_list.curselection()
         service_id = sel[0]
@@ -253,24 +286,16 @@ class Application(tk.Frame):
         self.service_text.set(service_name)
         self.url_text.set(url)
         self.username_text.set(username)
+        #check if we need to anonymise
         if self.asterisks == 1:
             password = self.anonymise(password)
         self.password_text.set(password)
-        print(sel)
     def clipboard(self, arg):
+        #copy to clipboard
         cbl.copy(arg)
 
-
-
-    #def comb_funcs(*funcs):
-     #       for func in funcs:
-    ##    def comb_func(*arguments, **kwarguments):
-    #    return comb_func
-    #            func(*arguments, **kwarguments)
-   
-
-
-
+#init, run app
 root = tk.Tk()
 Application(root). mainloop()
+#cleanup
 del db
