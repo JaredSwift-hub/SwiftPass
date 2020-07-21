@@ -102,9 +102,15 @@ class Application(tk.Frame):
         self.cancel_btn = Button(self.parent, text='Cancel', width=12, command=self.cancel,state='disabled')
         self.cancel_btn.grid(row=2, column=4, pady=20, padx=5)
 
-        #self.copy_url_btn = Button(self.parent, text='Copy', width=12, command=self.clipboard(self.url_entry.get()))
-        #self.copy_url_btn.grid(row =2, column=2)
-        #self.toggle_tb(1)
+        self.copy_url_btn = Button(self.parent, text='Copy', width=12, command= lambda : self.clipboard(self.url_entry.get()))
+        self.copy_url_btn.grid(row =2, column=2)
+
+        self.copy_uname_btn = Button(self.parent, text='Copy', width=12, command= lambda : self.clipboard(self.username_entry.get()))
+        self.copy_uname_btn.grid(row =3, column=2)    
+
+        self.copy_pass_btn = Button(self.parent, text='Copy', width=12, command= lambda : self.clipboard(db.get_password(self.serviceid_entry.get())))
+        self.copy_pass_btn.grid(row =4, column=2) 
+       # self.toggle_tb(1)
 
     def deselect_lb_item(self, event):
         if self.selected_index == self.previous_index:
@@ -251,10 +257,10 @@ class Application(tk.Frame):
             password = self.anonymise(password)
         self.password_text.set(password)
         print(sel)
+    def clipboard(self, arg):
+        cbl.copy(arg)
 
-#    def clipboard(self, arg):
-#        return
-#        cbl.copy(arg)
+
 
     #def comb_funcs(*funcs):
      #       for func in funcs:
