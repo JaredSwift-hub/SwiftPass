@@ -1,6 +1,6 @@
 import sqlite3
 
-class Database:
+class PasswordDatabase:
     def __init__(self, db):
         self.conn = sqlite3.connect(db)
         self.cur = self.conn.cursor()
@@ -42,6 +42,3 @@ class Database:
         self.conn.close()
 
 
-db = Database('swiftpass.db')
-db.insert("YouTube", "www.youtube.com", "jared", "password123")
-db.get_password(1)

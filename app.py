@@ -8,9 +8,19 @@ except ImportError:
     from Tkinter import StringVar, Label, W, Entry, Listbox, Button, END
     from Tkinter import messagebox as mb
 import clipboard as cbl
-from db import Database
+from db import PasswordDatabase
 #create database and connection
-db = Database('swiftpass.db')
+db = PasswordDatabase('swiftpass.db')
+key =''
+
+class User:
+    def _init__(self, name, master_password):
+        self.name = name
+        self.master_password = master_password
+        self.key = ''
+
+
+
 
 #Tkinter class
 class Application(tk.Frame):
@@ -22,7 +32,10 @@ class Application(tk.Frame):
         self.previous_index = None
         self.update_flag = False
         self.action_flag = 0 
+        self.previous_key = ''
+        self.new_key = ''
         #init frame
+        print('INITIALISING FRAME')
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
         #Set window name, size
@@ -33,6 +46,8 @@ class Application(tk.Frame):
         self.generate_widgets()
         self.populate_data()
     def generate_widgets(self):
+        print('GENERATING WIDGETS')
+
         #Service ID
         self.serviceid_text = StringVar()
         self.serviceid_label = Label(self.parent, text='Service ID', font=('bold', 14,), pady=20, padx=5)
@@ -129,12 +144,14 @@ class Application(tk.Frame):
 
     #Deselect currently selected listbox item
     def deselect_lb_item(self, event):
+        print('DESELECTED LISTBOX')
         if self.selected_index == self.previous_index:
             self.password_list.selection_clear(0, tk.END)
         self.previous_index = self.password_list.curselection()
 
     def populate_data(self):
         #clear listbox
+        print('POPULATING DATA')
         self.password_list.delete(0, END)
 
         if self.asterisks == 1:
@@ -150,6 +167,7 @@ class Application(tk.Frame):
         self.password_list.event_generate("<<ListboxSelect>>")
     
     def anonyimise_listbox(self, data):
+        print('ANONYIMISING DATA')
         #anonyimise password
         pwd = self.anonymise(str(data[4]))
         data_list = list(data)
@@ -158,10 +176,12 @@ class Application(tk.Frame):
         #insert password
         self.password_list.insert(END, new_row)
     def unan_listbox(self):
+        print('UNANYMISING DATA')
         #reinit data
         self.populate_data()
 
     def toggle_show_passwords(self):
+        print('TOGGLING SHOW PASSWORDS')
         changed_flag = False
         if self.asterisks ==1: 
             self.asterisks = 0
@@ -183,6 +203,7 @@ class Application(tk.Frame):
         #return anonyimised password
         return "*"*len(password)
     def add_service(self):
+        print('BEGIN ADD SERVICE')
         self.clear()
         self.toggle_tb(0)
         self.action_flag='add'
@@ -194,6 +215,7 @@ class Application(tk.Frame):
         self.save_btn["state"] = "active"
         self.cancel_btn["state"] = "active"       
     def cancel(self):
+        print('CANCEL ACTION')
         self.toggle_tb(1)
         self.save_btn["state"] = "disabled"
         self.cancel_btn["state"] = "disabled"   
@@ -205,6 +227,7 @@ class Application(tk.Frame):
         return
 
     def save(self):
+        print('SAVING ACTION')
         allow = False
         if self.action_flag == 'add':
             if self.insert_service() !=-1:
@@ -224,8 +247,10 @@ class Application(tk.Frame):
             self.password_list["state"] = "normal"
             self.populate_data()
     def insert_service(self):
-        if self.check() == -1: return -1
+        print('ATTEMPTING INSERT TO DATABASE')
+        if self.check() == -1: return-1
         #insert data to be database
+        print('INSERT SUCCESSFUL')
         db.insert(self.service_entry.get(), self.url_entry.get(), str(self.username_entry.get()), self.password_entry.get())
         self.populate_data()
 
@@ -257,7 +282,9 @@ class Application(tk.Frame):
         self.populate_data()
 
     def remove_service(self):
-        return
+        id = self.serviceid_entry.get()
+        db.remove(id)
+        self.populate_data()
     def clear(self):
         #clear textboxes
         for tb in self.textboxes:
