@@ -106,39 +106,39 @@ class Application(tk.Frame):
         #self.scrollbar.config(command=self.password_list.yview)
 
         #Add button
-        self.add_btn = Button(self.parent, text='Add Service', width=12, command=self.add_service)
+        self.add_btn = Button(self.parent, text='Add Service', width=12, command=self.add_service,fg='black',foreground='black',highlightbackground='black')
         self.add_btn.grid(row=0, column=3, pady=20,padx=5)
 
         #Remove button
-        self.remove_btn = Button(self.parent, text='Remove Service', width=12, command=self.remove_service)
+        self.remove_btn = Button(self.parent, text='Remove Service', width=12, command=self.remove_service,fg='black',foreground='black',highlightbackground='black')
         self.remove_btn.grid(row=0, column=4, pady=20, padx=5)
 
         #Edit button
-        self.edit_btn = Button(self.parent, text='Edit Service', width=12,command=self.edit_service)
+        self.edit_btn = Button(self.parent, text='Edit Service', width=12,command=self.edit_service,fg='black',foreground='black',highlightbackground='black')
         self.edit_btn.grid(row=1, column=3, pady=20, padx=5)
 
         #Show Password button
-        self.show_passwords_btn = Button(self.parent, text='Show Passwords', width=12, command=self.toggle_show_passwords)
+        self.show_passwords_btn = Button(self.parent, text='Show Passwords', width=12, command=self.toggle_show_passwords,fg='black',foreground='black',highlightbackground='black')
         self.show_passwords_btn.grid(row=1, column=4, pady=20, padx=5)
 
         #Save button
-        self.save_btn = Button(self.parent, text='Save', width=12, command=self.save,state='disabled')
+        self.save_btn = Button(self.parent, text='Save', width=12, command=self.save,state='disabled',fg='black', foreground='black',highlightbackground='black')
         self.save_btn.grid(row=2, column=3, pady=20, padx=5)
 
         #Cancel button
-        self.cancel_btn = Button(self.parent, text='Cancel', width=12, command=self.cancel,state='disabled')
+        self.cancel_btn = Button(self.parent, text='Cancel', width=12, command=self.cancel,state='disabled',fg='black',foreground='black',highlightbackground='black')
         self.cancel_btn.grid(row=2, column=4, pady=20, padx=5)
 
         #Copy URL button
-        self.copy_url_btn = Button(self.parent, text='Copy', width=12, command= lambda : self.clipboard(self.url_entry.get()))
+        self.copy_url_btn = Button(self.parent, text='Copy', width=12, command= lambda : self.clipboard(self.url_entry.get()),fg='black',foreground='black',highlightbackground='black')
         self.copy_url_btn.grid(row =2, column=2)
 
         #Copy Username button
-        self.copy_uname_btn = Button(self.parent, text='Copy', width=12, command= lambda : self.clipboard(self.username_entry.get()))
+        self.copy_uname_btn = Button(self.parent, text='Copy', width=12, command= lambda : self.clipboard(self.username_entry.get()),fg='black',foreground='black',highlightbackground='black')
         self.copy_uname_btn.grid(row =3, column=2)    
 
         #Copy Password button
-        self.copy_pass_btn = Button(self.parent, text='Copy', width=12, command= lambda : self.clipboard(db.get_password(self.serviceid_entry.get())))
+        self.copy_pass_btn = Button(self.parent, text='Copy', width=12, command= lambda : self.clipboard(db.get_password(self.serviceid_entry.get())),fg='black',foreground='black',highlightbackground='black')
         self.copy_pass_btn.grid(row =4, column=2) 
         #self.toggle_tb(1)
 
