@@ -1,14 +1,16 @@
 #python2/3 compatability
 try:
     import tkinter as tk    
-    from tkinter import StringVar, Label, W, Entry, Listbox, Button, END
+    from tkinter import StringVar, Label, N, E, S, W, Entry, Listbox, Button, END
     from tkinter import messagebox as mb
 except ImportError:
     import Tkinter as tk
-    from Tkinter import StringVar, Label, W, Entry, Listbox, Button, END
+    from Tkinter import StringVar, Label, N, E, S, W, Entry, Listbox, Button, END
     from Tkinter import messagebox as mb
 import clipboard as cbl
 from db import PasswordDatabase
+import random
+import string
 #create database and connection
 db = PasswordDatabase('swiftpass.db')
 key =''
@@ -141,6 +143,12 @@ class Application(tk.Frame):
         self.copy_pass_btn = Button(self.parent, text='Copy', width=12, command= lambda : self.clipboard(db.get_password(self.serviceid_entry.get())),fg='black',foreground='black',highlightbackground='black')
         self.copy_pass_btn.grid(row =4, column=2) 
         #self.toggle_tb(1)
+
+        self.generate_secure_password_32_btn = Button(self.parent, text='Generate (32)', width=12,fg='black',foreground='black',highlightbackground='black', command = lambda: self.password_text.set(self.generate_password(32)))
+        self.generate_secure_password_32_btn.grid(row=4, column=3)
+
+        self.generate_secure_password_64_btn = Button(self.parent, text='Generate (64)', width=12,fg='black',foreground='black',highlightbackground='black', command = lambda: self.password_text.set(self.generate_password(64)))
+        self.generate_secure_password_64_btn.grid(row=4, column=4)        
 
     #Deselect currently selected listbox item
     def deselect_lb_item(self, event):
@@ -320,6 +328,10 @@ class Application(tk.Frame):
     def clipboard(self, arg):
         #copy to clipboard
         cbl.copy(arg)
+
+    def generate_password(self, len):
+        return ''.join(random.choice(string.ascii_letters) for i in range(len))
+
 
 #init, run app
 root = tk.Tk()
