@@ -144,10 +144,10 @@ class Application(tk.Frame):
         self.copy_pass_btn.grid(row =4, column=2) 
         #self.toggle_tb(1)
 
-        self.generate_secure_password_32_btn = Button(self.parent, text='Generate (32)', width=12,fg='black',foreground='black',highlightbackground='black', command = lambda: self.password_text.set(self.generate_password(32)))
+        self.generate_secure_password_32_btn = Button(self.parent, text='Generate (32)', width=12,fg='black',foreground='black',highlightbackground='black', command = lambda: self.password_text.set(self.generate_password(32)), state='disabled')
         self.generate_secure_password_32_btn.grid(row=4, column=3)
 
-        self.generate_secure_password_64_btn = Button(self.parent, text='Generate (64)', width=12,fg='black',foreground='black',highlightbackground='black', command = lambda: self.password_text.set(self.generate_password(64)))
+        self.generate_secure_password_64_btn = Button(self.parent, text='Generate (64)', width=12,fg='black',foreground='black',highlightbackground='black', command = lambda: self.password_text.set(self.generate_password(64)), state='disabled')
         self.generate_secure_password_64_btn.grid(row=4, column=4)        
 
     #Deselect currently selected listbox item
@@ -221,7 +221,9 @@ class Application(tk.Frame):
         self.show_passwords_btn["state"] = "disabled"
         self.password_list["state"] = "disabled"
         self.save_btn["state"] = "active"
-        self.cancel_btn["state"] = "active"       
+        self.cancel_btn["state"] = "active"      
+        self.generate_secure_password_32_btn["state"] = "active"
+        self.generate_secure_password_64_btn["state"] = "active"
     def cancel(self):
         print('CANCEL ACTION')
         self.toggle_tb(1)
@@ -231,7 +233,9 @@ class Application(tk.Frame):
         self.remove_btn["state"] = "active"
         self.edit_btn["state"] = "active"
         self.password_list["state"] = "normal"
-        self.show_passwords_btn["state"] = "active"               
+        self.show_passwords_btn["state"] = "active"  
+        self.generate_secure_password_32_btn["state"] = "disabled"
+        self.generate_secure_password_64_btn["state"] = "disabled"             
         return
 
     def save(self):
@@ -253,6 +257,9 @@ class Application(tk.Frame):
             self.edit_btn["state"] = "active"
             self.show_passwords_btn["state"] = "active"    
             self.password_list["state"] = "normal"
+            self.generate_secure_password_32_btn["state"] = "disabled"
+            self.generate_secure_password_64_btn["state"] = "disabled"
+
             self.populate_data()
     def insert_service(self):
         print('ATTEMPTING INSERT TO DATABASE')
@@ -282,6 +289,8 @@ class Application(tk.Frame):
         self.save_btn["state"] = "active"
         self.cancel_btn["state"] = "active"  
         self.action_flag='edit'
+        self.generate_secure_password_32_btn["state"] = "active"
+        self.generate_secure_password_64_btn["state"] = "active"
     
     def commit_edit(self):
         if self.check()==-1: return
